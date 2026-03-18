@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blue: Mardi Gras Clean Water Map</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-o9N1j7kC4XdzI0v+g7K0R+2j7VQ91YRu3t5g9forWcM=" crossorigin="" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <a class="brand" href="#home">
+          <span class="brand__mark" aria-hidden="true">🌊</span>
+          <span class="brand__text">Blue App</span>
+        </a>
+
+        <nav class="nav" aria-label="Primary">
+          <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav">
+            <span class="visually-hidden">Toggle navigation</span>
+            <span class="nav__icon"></span>
+          </button>
+          <ul class="nav__list" id="primaryNav">
+            <li><a class="nav__link" href="#home">Home</a></li>
+            <li><a class="nav__link" href="#report">Report</a></li>
+            <li><a class="nav__link" href="#map">Map</a></li>
+            <li><a class="nav__link" href="#about">About</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="home">
+        <div class="container hero__inner">
+          <div class="hero__content">
+            <h1 class="hero__title">Blue — Find clean water during Mardi Gras</h1>
+            <p class="hero__subtitle">
+              Discover nearby clean water stations, report new sources, and get safe hydration while you enjoy the parade.
+            </p>
+            <div class="hero__actions">
+              <a class="button button--primary" href="#map">View map</a>
+              <a class="button button--ghost" href="#report">Report a station</a>
+            </div>
+          </div>
+          <div class="hero__media" aria-hidden="true">
+            <div class="card visual">
+              <div class="visual__header">
+                <span class="visual__dot visual__dot--red"></span>
+                <span class="visual__dot visual__dot--yellow"></span>
+                <span class="visual__dot visual__dot--green"></span>
+              </div>
+              <div class="visual__content">
+                <p class="visual__title">Interactive demo</p>
+                <p class="visual__text">Use the controls below to try out the built-in features.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="report">
+        <div class="container">
+          <div class="section__header">
+            <h2 class="section__title">Report a clean water station</h2>
+            <p class="section__subtitle">
+              Help everyone stay hydrated by adding nearby sources of clean drinking water.
+            </p>
+          </div>
+
+          <div class="grid grid--2">
+            <div class="card">
+              <h3 class="card__title">Add a station</h3>
+              <form id="taskForm" class="form">
+                <div class="form__row">
+                  <label class="form__label" for="taskInput">Location name</label>
+                  <input
+                    class="form__input"
+                    id="taskInput"
+                    type="text"
+                    placeholder="e.g., Near Bourbon St. fountain"
+                    required
+                  />
+                </div>
+                <div class="form__row">
+                  <label class="form__label" for="taskNotes">Notes</label>
+                  <input
+                    class="form__input"
+                    id="taskNotes"
+                    type="text"
+                    placeholder="e.g., Open 10am–9pm, filtered water"
+                  />
+                </div>
+                <div class="form__row">
+                  <label class="form__label" for="rating">Rating</label>
+                  <select class="form__input" id="rating" required>
+                    <option value="" disabled selected>How easy is it to access?</option>
+                    <option value="5">5 - Easy + clean</option>
+                    <option value="4">4 - Good</option>
+                    <option value="3">3 - OK</option>
+                    <option value="2">2 - Hard to reach</option>
+                    <option value="1">1 - Not accessible</option>
+                  </select>
+                </div>
+                <div class="form__row">
+                  <label class="form__label" for="photo">Photo (optional)</label>
+                  <input class="form__input" id="photo" type="file" accept="image/*" />
+                  <div class="photo-preview" id="photoPreview" aria-hidden="true"></div>
+                </div>
+                <button class="button button--primary" type="submit">Share station</button>
+              </form>
+              <p class="form__hint">
+                Tip: Add a short note and an optional photo so others know what to expect at this location.
+              </p>
+            </div>
+
+            <div class="card">
+              <div class="card__header">
+                <h3 class="card__title">Shared stations</h3>
+                <span class="badge" id="taskCount">0</span>
+              </div>
+              <ul class="task-list" id="taskList" aria-label="Reported stations"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--alt" id="map">
+        <div class="container">
+          <div class="section__header">
+            <h2 class="section__title">Map: Find clean water nearby</h2>
+            <p class="section__subtitle">
+              View community-shared stations on the map. Tap a marker to see details and get directions.
+            </p>
+          </div>
+
+          <div class="grid grid--2">
+            <div class="card" style="padding: 0; overflow: hidden;">
+              <div class="card__header" style="padding: 1.5rem 1.5rem 0;">
+                <h3 class="card__title">Nearby stations</h3>
+                <button class="button button--ghost" id="locateBtn" type="button">Find me</button>
+              </div>
+              <div id="map" class="map"></div>
+            </div>
+
+            <div class="card">
+              <div class="card__header">
+                <h3 class="card__title">Station list</h3>
+                <span class="badge" id="stationCount">0</span>
+              </div>
+              <ul class="station-list" id="stationList" aria-label="Station list"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="about">
+        <div class="container">
+          <div class="section__header">
+            <h2 class="section__title">About Blue</h2>
+            <p class="section__subtitle">
+              A small community tool to help you find clean water stations during Mardi Gras.
+            </p>
+          </div>
+
+          <div class="card">
+            <p>
+              Blue is built as a lightweight static app so anyone can open it from a phone without installing anything. Use it to share water sources, help others stay hydrated, and keep the party going safely.
+            </p>
+            <ul class="features">
+              <li>Map-based station directory with live markers</li>
+              <li>Quick sharing UI for reporting new clean water spots</li>
+              <li>Designed to work on mobile with a responsive layout</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <p>© <span id="year">2026</span> Blue App — built with simple HTML, CSS, and JavaScript.</p>
+        <p class="footer__links">
+          <a href="#home">Back to top</a> ·
+          <a href="#report">Report</a> ·
+          <a href="#map">Map</a>
+        </p>
+      </div>
+    </footer>
+
+    <div class="modal" id="chatModal" aria-hidden="true">
+      <div class="modal__backdrop" data-close="true"></div>
+      <div class="modal__panel" role="dialog" aria-modal="true" aria-label="Station chat">
+        <div class="modal__header">
+          <h3 class="modal__title" id="chatStationName">Chat</h3>
+          <button class="modal__close" id="chatCloseBtn" aria-label="Close chat">×</button>
+        </div>
+        <div class="modal__body" id="chatMessages"></div>
+        <form class="modal__footer" id="chatForm">
+          <input class="form__input" id="chatInput" type="text" placeholder="Ask about access or availability" required />
+          <button class="button button--primary" type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9N1j7kC4XdzI0v+g7K0R+2j7VQ91YRu3t5g9forWcM=" crossorigin=""></script>
+    <script src="script.js" defer></script>
+  </body>
+</html>
